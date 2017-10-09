@@ -9,11 +9,10 @@ LATEX     = tex
 AR        = ar
 CXX       = g++
 CXXFLAGS  = -std=c++11 -c -I./$(INCLUDE)
-RM	      = rm -f
 THREAD    = -lpthread
 
 # ****** Compilación de módulos **********
-.PHONY: all clean mrproper
+.PHONY: all clean mrproper crearpdf limpiarpdf
 
 all: $(BIN)/prodcons-fifo $(BIN)/prodcons-lifo
 
@@ -29,6 +28,15 @@ $(OBJ)/%.o: $(SRC)/%.cpp
 $(OBJ)/prodcons-lifo.o: $(INCLUDE)/Semaphore.h
 
 $(OBJ)/prodcons-fifo.o: $(INCLUDE)/Semaphore.h
+
+
+# ************ PDf ************
+
+crearpdf:
+	@cd tex && make
+
+limpiarpdf:
+	@cd tex && make mrproper
 
 # ************ Limpieza ************
 clean:
