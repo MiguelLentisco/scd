@@ -1,0 +1,10 @@
+# Compiled source #
+###################
+
+*.o
+
+
+# Directories ignored #
+#######################
+
+practica1/problema1_prodcons/obj
