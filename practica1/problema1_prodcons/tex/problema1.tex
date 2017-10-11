@@ -124,6 +124,17 @@
 {.5em}                            % Espacio tras la cabecera.
 {\thmname{#1}\thmnumber{ #2}\thmnote{ (#3)}}     % Especificación de la cabecera (actual: nombre en negrita).
 
+% Nuevo estilo para definiciones
+\newtheoremstyle{ejercicio-style}  % Nombre del estilo
+{-0.5em}                                  % Espacio por encima
+{}                                  % Espacio por debajo
+{\normalfont}                                  % Fuente del cuerpo
+{}                                  % Identación
+{\bf\sffamily}                      % Fuente para la cabecera
+{.}                                 % Puntuación tras la cabecera
+{.5em}                              % Espacio tras la cabecera
+{\thmname{#1}\thmnote{ #3}}  % Especificación de la cabecera
+
 
 \mdfdefinestyle{ejercicio-frame}{
   linewidth=2pt, %
@@ -156,10 +167,12 @@
     & & \\
     & \Large{Sistemas Concurrentes y Distribuidos} & \\
                & \large{Práctica 1} & \\
+               & \large{Problema 1.} & \\
+          & \large{} & \\
           & & \\
           & \textsf{Estudiante: Miguel Lentisco Ballesteros } & \\
           & \textsf{Grupo de prácticas:} A1 & \\
-          & \textsf{Fecha de entrega:} TBA & \\
+          %& \textsf{Fecha de entrega:} TBA & \\
          \multirow{-10}{*}{ \begin{tabular}{c}
         \small{3º curso / 1º cuatr.} \\ Grado Ing. Inform. \\ Doble Grado Ing. \\ Inform. y Mat.
 \end{tabular}}  & & \\
@@ -186,11 +199,9 @@ Por supuesto tenemos que tener en cuenta que pasa cuando vayan a escribir y leer
 Si el buffer es una cola, tenemos dos posibilidades en este caso:
 \begin{itemize}
 	\item En este caso, el bucle del productor es hasta la cantidad de items a producir, luego podemos aprovechar esta ventaja y usar la variable $i$ como el índice ya que simplemente se va a escribir en $i \% buffer\_tam$ cuando el semáforo de escritura lo permita (explicado a continuación), e independientemente del productor; el consumidor irá leyendo en el mismo orden $i \% buffer\_tam$ cuando el semáforo de lectura deje hacerlo, por tanto tendremos variables locales que no interfieren entre sí, no necesitamos exclusión mutua.
-	
+
 	\item Por otro lado, si tuviéramos que llevar la cuenta inicialmente o en cualquier momento saber donde se está escribiendo o leyendo entonces tendríamos que tener dos índices, uno de escritura y otro de lectura, variables globales para saberlo. Igualmente que en el primer caso, estas variables serían independientes entre sí y no habría problemas de carrera, luego de nuevo, no necesitamos exclusión mutua. Se hace igual, sustituyendo $i$ por el índice lectura/escritura correspondiente y incrementando cada índice al escribir/leer en el buffer.
 \end{itemize}
-
-\newpage
 
 \subsection*{Semáforo}
 \label{sec::semaforo}
@@ -202,4 +213,11 @@ El semáforo de escritura sirve para parar al consumidor para que no siga escrib
 \label{sec::solucion}
 En los archivos fuentes, se encuentran las soluciones con $FIFO$ y $LIFO$ a este problema siguiendo la plantilla proporcionada y completando debidamente las funciones de consumidor y productor, añadiendo las variables globales consideradas (índices y buffer) y mostrando por pantalla cada vez que se escribe/lee en buffer así como cuando cada hebra acaba su cometido con un $fin$. Por supuesto, está comprobado con muchas veces que funciona correctamente.
 
+\subsection*{Solución LIFO}
+Veamos la solución $LIFO$:
+\lstinputlisting[language=C++, linerange={13-22, 87-126}, caption=prodcons-lifo.cpp]{../src/prodcons-lifo.cpp}
+
+\subsection*{Solución FIFO}
+Veamos la solución $FIFO$:
+\lstinputlisting[language=C++, linerange={12-22, 87-124}, caption=prodcons-fifo.cpp]{../src/prodcons-fifo.cpp}
 \end{document}
