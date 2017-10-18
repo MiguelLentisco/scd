@@ -14,7 +14,7 @@ THREAD    = -lpthread
 # ****** Compilación de módulos **********
 .PHONY: all clean mrproper crearpdf limpiarpdf
 
-all: $(BIN)/fumadores-estanquero
+all: $(BIN)/fumadores-estanquero clean
 
 # --- Ejecutables ---
 $(BIN)/fumadores-estanquero: $(OBJ)/fumadores-estanquero.o $(OBJ)/Semaphore.o

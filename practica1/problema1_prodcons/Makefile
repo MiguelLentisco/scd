@@ -14,7 +14,7 @@ THREAD    = -lpthread
 # ****** Compilación de módulos **********
 .PHONY: all clean mrproper crearpdf limpiarpdf
 
-all: $(BIN)/prodcons-fifo $(BIN)/prodcons-lifo
+all: $(BIN)/prodcons-fifo $(BIN)/prodcons-lifo clean
 
 # --- Ejecutables ---
 $(BIN)/prodcons-fifo: $(OBJ)/prodcons-fifo.o $(OBJ)/Semaphore.o
