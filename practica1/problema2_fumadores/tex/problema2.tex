@@ -1,0 +1,223 @@
+\documentclass[11pt]{article}
+
+%%% PAQUETES
+
+% Idioma
+\usepackage[utf8]{inputenc}
+\usepackage[spanish]{babel}
+\setlength{\parindent}{0pt}
+
+% Matemáticas
+\usepackage{amssymb, amsthm}
+
+% Fuentes
+\usepackage[T1]{fontenc}
+\usepackage[sfdefault, scaled=.85]{roboto}
+\usepackage[scaled=.8]{FiraMono}
+\usepackage[cmintegrals]{newtxsf}
+\usepackage[italic]{mathastext}
+\usepackage{textcomp}
+\usepackage{wasysym}
+
+% Tablas
+\usepackage{multirow}
+\usepackage{colortbl}
+
+% Gráficos y colores
+
+\usepackage[x11names, rgb, html]{xcolor}
+\usepackage{graphics}
+\usepackage{caption}
+\usepackage{float}
+\usepackage{adjustbox}
+
+% Ajustes del documento
+\usepackage{geometry}
+\geometry{left=3cm,right=3cm,top=3cm,bottom=3cm,headheight=1cm,headsep=0.5cm}
+\usepackage{enumitem}
+\usepackage{anysize}
+
+% Entornos personalizados.
+\usepackage{mdframed}
+
+% Código
+\usepackage{listingsutf8}
+
+%%% COLORES
+
+% Material Design
+
+\definecolor{50}{HTML}{E0F7FA}
+\definecolor{300}{HTML}{4DD0E1}
+\definecolor{500}{HTML}{00BCD4}
+\definecolor{700}{HTML}{0097A7}
+\definecolor{900}{HTML}{006064}
+
+% Solarized
+
+\definecolor{sbase03}{HTML}{002B36}
+\definecolor{sbase02}{HTML}{073642}
+\definecolor{sbase01}{HTML}{586E75}
+\definecolor{sbase00}{HTML}{657B83}
+\definecolor{sbase0}{HTML}{839496}
+\definecolor{sbase1}{HTML}{93A1A1}
+\definecolor{sbase2}{HTML}{EEE8D5}
+\definecolor{sbase3}{HTML}{FDF6E3}
+\definecolor{syellow}{HTML}{B58900}
+\definecolor{sorange}{HTML}{CB4B16}
+\definecolor{sred}{HTML}{DC322F}
+\definecolor{smagenta}{HTML}{D33682}
+\definecolor{sviolet}{HTML}{6C71C4}
+\definecolor{sblue}{HTML}{268BD2}
+\definecolor{scyan}{HTML}{2AA198}
+\definecolor{sgreen}{HTML}{859900}
+
+% Colores del documento
+
+\definecolor{text}{RGB}{78,78,78}
+\definecolor{accent}{RGB}{129, 26, 24}
+
+%%% LISTINGS
+
+% Listing -> Código fuente
+\renewcommand{\lstlistingname}{Código fuente}
+
+% Ajustes para que funcionen bien las tildes de los comentarios
+
+\lstset{
+  inputencoding=utf8/latin1
+}
+
+% Ajustes de Listings para el documento
+
+\lstset{
+  frame=leftline,
+  rulecolor=\color{300},
+  framerule=2pt,
+  % Números de línea
+  numbers=left,
+  % Margen adicional para alinear los entornos con el resto de párrafos
+  xleftmargin=0.7em,
+  % Espacio adicional debajo del título
+  belowcaptionskip=1\baselineskip,
+  % Colores
+  basicstyle=\footnotesize\ttfamily\color{sbase00},
+  keywordstyle=\color{700},
+  commentstyle=\color{300},
+  stringstyle=\color{500},
+  numberstyle=\color{500},
+  % Separar líenas largas en varias líneas
+  breaklines=true,
+  showstringspaces=false,
+  tabsize=2,
+}
+
+%%% ENTORNOS PERSONALIZADOS
+
+\newtheoremstyle{ejercicio-style} % Nombre del estilo.
+{-0.5em}                          % Espacio por encima.
+{}                                % Espacio por debajo.
+{\normalfont}                     % Fuente del cuerpo.
+{}                                % Identación.
+{\bf\sffamily}                    % Fuente para la cabecera.
+{.}                               % Puntuación tras la cabecera.
+{.5em}                            % Espacio tras la cabecera.
+{\thmname{#1}\thmnumber{ #2}\thmnote{ (#3)}}     % Especificación de la cabecera (actual: nombre en negrita).
+
+% Nuevo estilo para definiciones
+\newtheoremstyle{ejercicio-style}  % Nombre del estilo
+{-0.5em}                                  % Espacio por encima
+{}                                  % Espacio por debajo
+{\normalfont}                                  % Fuente del cuerpo
+{}                                  % Identación
+{\bf\sffamily}                      % Fuente para la cabecera
+{.}                                 % Puntuación tras la cabecera
+{.5em}                              % Espacio tras la cabecera
+{\thmname{#1}\thmnote{ #3}}  % Especificación de la cabecera
+
+
+\mdfdefinestyle{ejercicio-frame}{
+  linewidth=2pt, %
+  linecolor= 300, %
+  backgroundcolor= 50,
+  topline=false, %
+  bottomline=false, %
+  rightline=false,%
+  leftmargin=0pt, %
+  innerleftmargin=1em, %
+  innerrightmargin=1em,
+  rightmargin=0pt, %
+  innertopmargin=1em,%
+  innerbottommargin=1em, %
+  splittopskip=\topskip, %
+}%
+
+\surroundwithmdframed[style=ejercicio-frame]{ejer}
+
+\theoremstyle{ejercicio-style}
+\newtheorem{ejer}{Problema}
+
+\begin{document}
+
+% Cabecera del documento
+
+\begin{tabular*}{\textwidth}{@{\extracolsep{\fill}}!{\color{300}{\vrule width 2pt}}>{\columncolor{50}}clc}
+    \noalign{\global\arrayrulewidth=2pt}
+    %\arrayrulecolor{300}\hline
+    & & \\
+    & \Large{Sistemas Concurrentes y Distribuidos} & \\
+               & \large{Práctica 1} & \\
+               & \large{Problema 2.} & \\
+          & \large{} & \\
+          & & \\
+          & \textsf{Estudiante: Miguel Lentisco Ballesteros } & \\
+          & \textsf{Grupo de prácticas:} A1 & \\
+          %& \textsf{Fecha de entrega:} TBA & \\
+         \multirow{-10}{*}{ \begin{tabular}{c}
+        \small{3º curso / 1º cuatr.} \\ Grado Ing. Inform. \\ Doble Grado Ing. \\ Inform. y Mat.
+\end{tabular}}  & & \\
+    %\hline
+\end{tabular*}
+
+\vspace{1cm}
+
+
+\section*{Los 3 fumadores y el estanquero}
+\label{sec::prod_cons}
+
+\begin{ejer} Se nos pide dar una solución al problema del Productor/Consumidor siguiendo la plantilla proporcionada. Para la solución se usará como estructura para el buffer tanto como una estructura $LIFO$ (pila), como $FIFO$ (cola).
+\end{ejer}
+
+\subsection*{LIFO}
+\label{sec::lifo}
+Con el buffer como una pila, para saber donde estamos escribiendo y leyendo tendremos que usar una variable global que funcione como índice, esta variable será incrementada cuando el Productor escriba en el buffer y será decrementada y luego se lee el dato por el Consumidor, representando así el índice la posición donde tiene que escribir o leer respectivamente. \\
+
+Por supuesto tenemos que tener en cuenta que pasa cuando vayan a escribir y leer en el buffer el Consumidor y el Productor van a tener que modificar la variable indice pudiendo probar problemas de escritura/lectura; por ello cuando vayamos a usar esta variable tendremos que usar exclusión mutua: o bien un cerrojo o que sea una variable del tipo $atomic<int>$, siendo más fácil de usar la versión con $atomic$.
+
+\subsection*{FIFO}
+\label{sec::lifo}
+Si el buffer es una cola, tenemos dos posibilidades en este caso:
+\begin{itemize}
+	\item En este caso, el bucle del productor es hasta la cantidad de items a producir, luego podemos aprovechar esta ventaja y usar la variable $i$ como el índice ya que simplemente se va a escribir en $i \% buffer\_tam$ cuando el semáforo de escritura lo permita (explicado a continuación), e independientemente del productor; el consumidor irá leyendo en el mismo orden $i \% buffer\_tam$ cuando el semáforo de lectura deje hacerlo, por tanto tendremos variables locales que no interfieren entre sí, no necesitamos exclusión mutua.
+
+	\item Por otro lado, si tuviéramos que llevar la cuenta inicialmente o en cualquier momento saber donde se está escribiendo o leyendo entonces tendríamos que tener dos índices, uno de escritura y otro de lectura, variables globales para saberlo. Igualmente que en el primer caso, estas variables serían independientes entre sí y no habría problemas de carrera, luego de nuevo, no necesitamos exclusión mutua. Se hace igual, sustituyendo $i$ por el índice lectura/escritura correspondiente y incrementando cada índice al escribir/leer en el buffer.
+\end{itemize}
+
+\subsection*{Semáforo}
+\label{sec::semaforo}
+Ahora, para resolver el problema con semáforos, visto ya en clase, solo tendremos que poner dos semáforos, uno que sea para el productor (para escribir) y otro para el consumidor (para leer). Inicializamos el de escritura al tamaño del buffer (puede escribir hasta el máximo) y el de lectura a 0 (tiene que esperar a que el productor escriba), entonces cada vez que se vaya a producir haya un $sem\_wait$ de escritura, y cuando escriba se produzca un $sem\_signal$ de lectura para el consumidor que está esperando en $sem\_wait$ de lectura, pueda leer el dato y dar un $sem\_signal$ para indicar que hay un hueco vacío al productor. \\
+
+El semáforo de escritura sirve para parar al consumidor para que no siga escribiendo si el buffer está completo, y el de lectura para el consumidor que se espere a que haya datos que leer. Obviamente al productor le damos un margen de libertad del tamaño del buffer al principio y al de lectura ninguno, ya que se tiene que esperar a que el productor escriba.
+
+\subsection*{Solución}
+\label{sec::solucion}
+En los archivos fuentes, se encuentran las soluciones con $FIFO$ y $LIFO$ a este problema siguiendo la plantilla proporcionada y completando debidamente las funciones de consumidor y productor, añadiendo las variables globales consideradas (índices y buffer) y mostrando por pantalla cada vez que se escribe/lee en buffer así como cuando cada hebra acaba su cometido con un $fin$. Por supuesto, está comprobado con muchas veces que funciona correctamente.
+
+\subsection*{Solución LIFO}
+Veamos la solución $LIFO$:
+\lstinputlisting[language=C++, linerange={13-22, 87-126}, caption=prodcons-lifo.cpp]{../src/prodcons-lifo.cpp}
+
+\subsection*{Solución FIFO}
+Veamos la solución $FIFO$:
+\lstinputlisting[language=C++, linerange={12-22, 87-124}, caption=prodcons-fifo.cpp]{../src/prodcons-fifo.cpp}
+\end{document}
