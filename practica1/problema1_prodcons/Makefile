@@ -14,12 +14,16 @@ THREAD    = -lpthread
 # ****** Compilación de módulos **********
 .PHONY: all clean mrproper crearpdf limpiarpdf
 
-all: $(BIN)/prodcons-fifo $(BIN)/prodcons-lifo clean
+all: $(BIN)/prodcons-fifo $(BIN)/prodcons-lifo $(BIN)/prodcons-lifo-modificado $(BIN)/prodcons-fifo-modificado
 
 # --- Ejecutables ---
 $(BIN)/prodcons-fifo: $(OBJ)/prodcons-fifo.o $(OBJ)/Semaphore.o
 	$(CXX) -o $@ $^ $(THREAD)
 $(BIN)/prodcons-lifo: $(OBJ)/prodcons-lifo.o $(OBJ)/Semaphore.o
+	$(CXX) -o $@ $^ $(THREAD)
+$(BIN)/prodcons-lifo-modificado: $(OBJ)/prodcons-lifo-modificado.o $(OBJ)/Semaphore.o
+	$(CXX) -o $@ $^ $(THREAD)
+$(BIN)/prodcons-fifo-modificado: $(OBJ)/prodcons-fifo-modificado.o $(OBJ)/Semaphore.o
 	$(CXX) -o $@ $^ $(THREAD)
 
 $(OBJ)/%.o: $(SRC)/%.cpp
@@ -28,6 +32,10 @@ $(OBJ)/%.o: $(SRC)/%.cpp
 $(OBJ)/prodcons-lifo.o: $(INCLUDE)/Semaphore.h
 
 $(OBJ)/prodcons-fifo.o: $(INCLUDE)/Semaphore.h
+
+$(OBJ)/prodcons-lifo-modificado: $(INCLUDE)/Sempahore.
+
+$(OBJ)/prodcons-fifo-modificado: $(INCLUDE)/Sempahore.h
 
 
 # ************ PDf ************

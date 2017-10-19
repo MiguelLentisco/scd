@@ -3,7 +3,6 @@
 #include <thread>
 #include <mutex>
 #include <random>
-#include <atomic> // Para el índice
 #include "Semaphore.h"
 
 using namespace std ;
@@ -17,10 +16,12 @@ const int num_items = 40 ,   // número de items
 unsigned  cont_prod[num_items] = {0}, // contadores de verificación: producidos
           cont_cons[num_items] = {0}; // contadores de verificación: consumidos
 int buffer[tam_vec] = {0}; // Buffer donde ir guardando los datos
-Semaphore accesoBuffer = 1; // Semáforo para acceder al buffer
-int indicePila = 0; // Indice de la pila/buffer
-Semaphore puedoEscribir = tam_vec; 	// Semáforo para ir escribiendo
+int indiceEscritura = 0; // Indice para escribir
+int indiceLectura = 0; // Indice para leer
+Semaphore puedoEscribir = tam_vec; 	// Semaforo para ir escribiendo
 Semaphore puedoLeer = 0; // Semáforo para ir leyendo
+Semaphore indiceProductor = 1; // Semáforo para el índice productor
+Semaphore	indiceConsumidor = 1; // Semáforo para el índice consumidor
 
 
 //**********************************************************************
@@ -87,21 +88,20 @@ void test_contadores()
 
 //----------------------------------------------------------------------
 
-void funcion_hebra_productora() {
-	 // Inicializamos el índice de la pila a 0
-	 indicePila = 0;
-   for (unsigned i = 0; i < num_items; ++i) {
+void funcion_hebra_productora(int n_hebra, int n_iteraciones) {
+   for (unsigned i = 0; i < n_iteraciones; ++i) {
 		  // Producimos el dato
       int dato = producir_dato();
 			// Espera del semáforo de escritura
 			sem_wait(puedoEscribir);
 			// Escribimos en el buffer e incrementamos el índice
-			sem_wait(accesoBuffer);
-			buffer[indicePila++] = dato;
-			int aux = indicePila - 1;
-			sem_signal(accesoBuffer);
+			sem_wait(indiceProductor);
+			buffer[indiceEscritura++ % tam_vec] = dato;
+			int aux = indiceEscritura - 1;
+			sem_signal(indiceProductor);
 			// Mostramos por pantalla la escritura en buffer
-			cout << "Escribo en buffer[" << aux << "] = " << dato << endl;
+			cout << "Productor: " << n_hebra << endl;
+			cout << "Escribo en el buffer[" << aux << "] = " << dato << endl;
 			// Señal para leer del semáforo de lectura
 			sem_signal(puedoLeer);
    }
@@ -111,42 +111,61 @@ void funcion_hebra_productora() {
 
 //----------------------------------------------------------------------
 
-void funcion_hebra_consumidora() {
-   for (unsigned i = 0; i < num_items; ++i) {
+void funcion_hebra_consumidora(int n_hebra, int n_iteraciones) {
+   for (unsigned i = 0; i < n_iteraciones; ++i) {
       int dato;
 			// Espera al semáfoto de lectura
 			sem_wait(puedoLeer);
-			// Leemos el dato del buffer, decrementando antes el índice
-			sem_wait(accesoBuffer);
-			dato = buffer[--indicePila];
-			int aux = indicePila;
-			sem_signal(accesoBuffer);
+			// Leemos el dato del buffer e incrementamos el índice
+			sem_wait(indiceConsumidor);
+			dato = buffer[indiceLectura++ % tam_vec];
+			int aux = indiceLectura-1;
+			sem_signal(indiceConsumidor);
 			// Mostramos por pantalla la lectura
-			cout << "                    Leo del buffer[" << aux << "] = " << dato << endl;
+			cout << "                  Leo del buffer[" << aux << "] = " << dato << endl;
 			// Señal para escribir al semáforo de escritura
 			sem_signal(puedoEscribir);
 			// Consumimos el dato
       consumir_dato(dato);
     }
 		// Por pantalla cuando ha acabado de consumir
-		cout << "\nHebra consumidora: fin." << endl;
+		cout << "\nHebra consumidora: " << n_hebra << ", fin." << endl;
 }
 
 //----------------------------------------------------------------------
 
-int main() {
-   cout << "--------------------------------------------------------" << endl
-        << "Problema de los productores-consumidores (solución LIFO)." << endl
-        << "--------------------------------------------------------" << endl
-        << flush ;
+int main(int args, char* argv[]) {
+	if (args != 3) {
+		cout << "Error, parametros no válidos.";
+		return 1;
+	}
 
-   thread hebra_productora ( funcion_hebra_productora ),
-          hebra_consumidora( funcion_hebra_consumidora );
+	int n_productores = atoi(argv[1]);
+	int n_consumidores = atoi(argv[2]);
 
-   hebra_productora.join() ;
-   hebra_consumidora.join() ;
+	thread hebrasProductoras[n_productores];
+	thread hebrasConsumidoras[n_consumidores];
 
-   test_contadores();
+ 	cout << "--------------------------------------------------------" << endl
+      << "Problema de los productores-consumidores (solución FIFO)." << endl
+      << "--------------------------------------------------------" << endl
+      << flush ;
 
-	 return 0;
+
+	for (int i = 0; i < n_productores - 1; ++i)
+		hebrasProductoras[i] = thread(funcion_hebra_productora, i, (num_items/n_productores));
+	hebrasProductoras[n_productores - 1] = thread(funcion_hebra_productora, n_productores - 1, ((num_items/n_productores) + (num_items % n_productores)));
+
+	for (int i = 0; i < n_consumidores - 1; ++i)
+		hebrasConsumidoras[i] = thread(funcion_hebra_consumidora, i, (num_items/n_consumidores));
+	hebrasConsumidoras[n_consumidores - 1] = thread(funcion_hebra_consumidora, n_consumidores - 1,((num_items/n_consumidores) + (num_items % n_consumidores)));
+
+	for (int i = 0; i < n_productores; ++i)
+		hebrasProductoras[i].join();
+	for (int i = 0; i < n_consumidores; ++i)
+		hebrasConsumidoras[i].join();
+
+	test_contadores();
+
+	return 0;
 }
