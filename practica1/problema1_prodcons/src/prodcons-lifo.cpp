@@ -17,8 +17,8 @@ const int num_items = 40 ,   // número de items
 unsigned  cont_prod[num_items] = {0}, // contadores de verificación: producidos
           cont_cons[num_items] = {0}; // contadores de verificación: consumidos
 int buffer[tam_vec] = {0}; // Buffer donde ir guardando los datos
-Semaphore accesoBuffer = 1; // Semáforo para acceder al buffer
 int indicePila = 0; // Indice de la pila/buffer
+Semaphore accesoBuffer = 1; // Semáforo para acceder al buffer
 Semaphore puedoEscribir = tam_vec; 	// Semáforo para ir escribiendo
 Semaphore puedoLeer = 0; // Semáforo para ir leyendo
 

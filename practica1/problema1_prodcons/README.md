@@ -13,3 +13,7 @@ Para compilar la memoria:
 1. Compila `$ make crearpdf`.
 2. La memoria se encuentra en `tex`.
 3. Para borrar el pdf `$ make limpiarpdf`.
+
+# Extra: modificaciones
+
+Se incluyen modificaciones para poder ejecutar el programa con cuantos consumidores o productores queramos.

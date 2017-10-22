@@ -192,8 +192,7 @@
 \label{sec::lifo}
 Con el buffer como una pila, para saber donde estamos escribiendo y leyendo tendremos que usar una variable global que funcione como índice, esta variable será incrementada cuando el Productor escriba en el buffer y será decrementada y luego se lee el dato por el Consumidor, representando así el índice la posición donde tiene que escribir o leer respectivamente. \\
 
-Por supuesto tenemos que tener en cuenta que pasa cuando vayan a escribir y leer en el buffer el Consumidor y el Productor van a tener que modificar la variable indice pudiendo probar problemas de escritura/lectura; por ello cuando vayamos a usar esta variable tendremos que usar exclusión mutua: o bien un cerrojo o que sea una variable del tipo $atomic<int>$, siendo más fácil de usar la versión con $atomic$.
-
+Por supuesto tenemos que tener en cuenta que pasa cuando vayan a escribir y leer en el buffer el Consumidor y el Productor van a tener que modificar la variable indice pudiendo probar problemas de escritura/lectura; por ello cuando vayamos a usar esta variable tendremos que usar exclusión mutua, en este caso usaremos un semaforo de acceso al buffer.
 \subsection*{FIFO}
 \label{sec::lifo}
 Si el buffer es una cola, tenemos dos posibilidades en este caso:
@@ -205,9 +204,11 @@ Si el buffer es una cola, tenemos dos posibilidades en este caso:
 
 \subsection*{Semáforo}
 \label{sec::semaforo}
-Ahora, para resolver el problema con semáforos, visto ya en clase, solo tendremos que poner dos semáforos, uno que sea para el productor (para escribir) y otro para el consumidor (para leer). Inicializamos el de escritura al tamaño del buffer (puede escribir hasta el máximo) y el de lectura a 0 (tiene que esperar a que el productor escriba), entonces cada vez que se vaya a producir haya un $sem\_wait$ de escritura, y cuando escriba se produzca un $sem\_signal$ de lectura para el consumidor que está esperando en $sem\_wait$ de lectura, pueda leer el dato y dar un $sem\_signal$ para indicar que hay un hueco vacío al productor. \\
+Ahora, para resolver el problema con semáforos, visto ya en clase, solo tendremos que poner tres semáforos, uno que sea para el productor (para escribir), otro para el consumidor (para leer) y finalmente para el buffer (acceso a él). Inicializamos el de escritura al tamaño del buffer (puede escribir hasta el máximo), el de lectura a 0 (tiene que esperar a que el productor escriba) y el del buffer a 1 (solo una hebra en el buffer en cada momento); entonces cada vez que se vaya a producir haya un $sem\_wait$ de escritura, y cuando escriba se produzca un $sem\_signal$ de lectura para el consumidor que está esperando en $sem\_wait$ de lectura, pueda leer el dato y dar un $sem\_signal$ para indicar que hay un hueco vacío al productor. \\
 
-El semáforo de escritura sirve para parar al consumidor para que no siga escribiendo si el buffer está completo, y el de lectura para el consumidor que se espere a que haya datos que leer. Obviamente al productor le damos un margen de libertad del tamaño del buffer al principio y al de lectura ninguno, ya que se tiene que esperar a que el productor escriba.
+El semáforo de escritura sirve para parar al consumidor para que no siga escribiendo si el buffer está completo, y el de lectura para el consumidor que se espere a que haya datos que leer. Obviamente al productor le damos un margen de libertad del tamaño del buffer al principio y al de lectura ninguno, ya que se tiene que esperar a que el productor escriba. \\
+
+El semáforo del buffer sirve para implementar la exclusión mútua de sección crítica, cuando se modifica el buffer y su índice solo puede hacerlo una hebra a la vez.
 
 \subsection*{Solución}
 \label{sec::solucion}
@@ -215,7 +216,7 @@ En los archivos fuentes, se encuentran las soluciones con $FIFO$ y $LIFO$ a este
 
 \subsection*{Solución LIFO}
 Veamos la solución $LIFO$:
-\lstinputlisting[language=C++, linerange={13-22, 87-126}, caption=prodcons-lifo.cpp]{../src/prodcons-lifo.cpp}
+\lstinputlisting[language=C++, linerange={13-23, 88-135}, caption=prodcons-lifo.cpp]{../src/prodcons-lifo.cpp}
 
 \subsection*{Solución FIFO}
 Veamos la solución $FIFO$:
