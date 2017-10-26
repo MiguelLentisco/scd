@@ -14,9 +14,13 @@ THREAD    = -lpthread
 # ****** Compilación de módulos **********
 .PHONY: all clean mrproper crearpdf limpiarpdf
 
-all: $(BIN)/fumadores-estanquero clean
+all: $(BIN)/fumadores-estanquero $(BIN)/fumadores-estanquero-modificado
 
 # --- Ejecutables ---
+
+$(BIN)/fumadores-estanquero-modificado: $(OBJ)/fumadores-estanquero-modificado.o $(OBJ)/Semaphore.o
+	$(CXX) -o $@ $^ $(THREAD)
+
 $(BIN)/fumadores-estanquero: $(OBJ)/fumadores-estanquero.o $(OBJ)/Semaphore.o
 	$(CXX) -o $@ $^ $(THREAD)
 
@@ -24,6 +28,8 @@ $(OBJ)/%.o: $(SRC)/%.cpp
 	$(CXX) $(CXXFLAGS) -o $@ $<
 
 $(OBJ)/fumadores-estanquero.o: $(INCLUDE)/Semaphore.h
+
+$(OBJ)/fumadores-estanquero-modificado.o: $(INCLUDE)/Semaphore.h
 
 # ************ PDf ************
 
