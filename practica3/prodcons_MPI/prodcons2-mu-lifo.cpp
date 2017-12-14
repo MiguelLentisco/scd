@@ -1,18 +1,3 @@
-// -----------------------------------------------------------------------------
-//
-// Sistemas concurrentes y Distribuidos.
-// Práctica 3. Implementación de algoritmos distribuidos con MPI
-//
-// Archivo: prodcons2.cpp
-// Implementación del problema del productor-consumidor con
-// un proceso intermedio que gestiona un buffer finito y recibe peticiones
-// en orden arbitrario
-// (versión con un único productor y un único consumidor)
-//
-// Historial:
-// Actualizado a C++11 en Septiembre de 2017
-// -----------------------------------------------------------------------------
-
 #include <iostream>
 #include <thread> // this_thread::sleep_for
 #include <random> // dispositivos, generadores y distribuciones aleatorias
@@ -92,17 +77,15 @@ void funcion_consumidor(int id) {
 void funcion_buffer() {
    int        buffer[tam_vector],      // buffer con celdas ocupadas y vacías
               valor,                   // valor recibido o enviado
-              primera_libre       = 0, // índice de primera celda libre
-              primera_ocupada     = 0, // índice de primera celda ocupada
-              num_celdas_ocupadas = 0, // número de celdas ocupadas
+              indice = 0,
               etiqueta;
-   MPI_Status estado ;                 // metadatos del mensaje recibido
+   MPI_Status estado;                 // metadatos del mensaje recibido
 
    for (unsigned int i = 0; i < num_items * 2; ++i) {
       // 1. determinar si puede enviar solo prod., solo cons, o todos
-      if (num_celdas_ocupadas == 0)
+      if (indice == 0)
          etiqueta = etiq_producir;
-      else if (num_celdas_ocupadas == tam_vector)
+      else if (indice == tam_vector)
          etiqueta = etiq_consumir;
       else
          etiqueta = MPI_ANY_TAG;
@@ -112,14 +95,12 @@ void funcion_buffer() {
 
       // 3. procesar el mensaje recibido
       if (estado.MPI_SOURCE < num_productores) {
-        buffer[primera_libre] = valor;
-        primera_libre = (primera_libre+1) % tam_vector;
-        num_celdas_ocupadas++;
+        buffer[indice] = valor;
+        ++indice;
         cout << "Buffer ha recibido valor: " << valor << endl;
       } else {
-        valor = buffer[primera_ocupada];
-        primera_ocupada = (primera_ocupada+1) % tam_vector;
-        num_celdas_ocupadas--;
+        --indice;
+        valor = buffer[indice];
         cout << "Buffer va a enviar valor: " << valor << endl;
         MPI_Ssend(&valor, 1, MPI_INT, estado.MPI_SOURCE, etiq_consumir, MPI_COMM_WORLD);
       }
