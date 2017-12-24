@@ -15,8 +15,8 @@ const int
    num_productores       = 4,
    num_consumidores      = 5,
    etiq_producir_pares   = 0,
-   etiq_producir_impares = 2,
-   etiq_consumir         = 3;
+   etiq_producir_impares = 1,
+   etiq_consumir         = 2;
 
 //**********************************************************************
 // plantilla de función para generar un entero aleatorio uniformemente
@@ -44,15 +44,15 @@ int producir(int id) {
 
 void funcion_productor(int id) {
    unsigned int k = num_items / num_productores;
-   int etiqueta = etiq_producir_impares;
+   int etiq = etiq_producir_impares;
    if (id % 2 == 0)
-    etiqueta = etiq_producir_impares;
+    etiq = etiq_producir_pares;
    for (unsigned int i = 0; i < k; ++i) {
       // producir valor
       int valor_prod = producir(id);
       // enviar valor
       cout << "Productor " << id << " va a enviar valor: " << valor_prod << endl << flush;
-      MPI_Ssend( &valor_prod, 1, MPI_INT, num_productores, etiqueta, MPI_COMM_WORLD );
+      MPI_Ssend( &valor_prod, 1, MPI_INT, num_productores, etiq, MPI_COMM_WORLD );
    }
 }
 // ---------------------------------------------------------------------
@@ -82,17 +82,24 @@ void funcion_buffer() {
    int        buffer[tam_vector],      // buffer con celdas ocupadas y vacías
               valor,                   // valor recibido o enviado
               indice = 0,
-              etiqueta;
+              etiqueta,
+              modo = 1;
    MPI_Status estado;                 // metadatos del mensaje recibido
 
    for (unsigned int i = 0; i < num_items * 2; ++i) {
-      // 1. determinar si puede enviar solo prod., solo cons, o todos
-      if (indice == 0)
-         etiqueta = etiq_producir;
-      else if (indice == tam_vector)
-         etiqueta = etiq_consumir;
+      if (modo == 1)
+        etiqueta = etiq_producir_impares;
       else
-         etiqueta = MPI_ANY_TAG;
+        etiqueta = etiq_producir_pares;
+
+      if (indice == tam_vector)
+        etiqueta = etiq_consumir;
+      else if (indice != 0) {
+        MPI_Probe(MPI_ANY_SOURCE, MPI_ANY_TAG, MPI_COMM_WORLD, &estado);
+        // Es un consumidor
+        if (estado.MPI_SOURCE > num_productores)
+          etiqueta = etiq_consumir;
+      }
 
       // 2. recibir un mensaje del emisor o emisores aceptables
       MPI_Recv(&valor, 1, MPI_INT, MPI_ANY_SOURCE, etiqueta, MPI_COMM_WORLD, &estado);
@@ -102,6 +109,8 @@ void funcion_buffer() {
         buffer[indice] = valor;
         ++indice;
         cout << "Buffer ha recibido valor: " << valor << endl;
+        // Actualizar modo
+        modo = (modo % 2) + 1;
       } else {
         --indice;
         valor = buffer[indice];
