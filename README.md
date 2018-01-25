@@ -15,3 +15,7 @@
 
 ### Problema 1: Consumidor / Productor
 ### Problema 2: Los filósofos
+
+## Práctica 4
+
+### Problema 1: Planificación de tareas
