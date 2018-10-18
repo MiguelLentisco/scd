@@ -1,5 +1,5 @@
 # Prácticas SCD
-
+idiota
 ## Práctica 1
 
 ### Problema 1: Consumidor / Productor
